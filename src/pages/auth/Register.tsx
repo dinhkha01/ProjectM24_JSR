@@ -19,7 +19,6 @@ import { useDispatch } from "react-redux";
 import { createAccount } from "../../service/Login-Register/Login_Register";
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { users } from "../../config/interface";
 
 const { Title } = Typography;
 const { Step } = Steps;
