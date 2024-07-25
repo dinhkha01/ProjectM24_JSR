@@ -4,13 +4,15 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
+import Navbar from "../components/Navbar";
 
 const Router = () => {
   return (
     <div>
       <Routes>
         <Route path="/registor" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/homeUser" element={<Navbar/>} />
       </Routes>
     </div>
   );

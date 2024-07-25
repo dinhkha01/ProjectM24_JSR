@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "..";
 import { users } from "../../config/interface";
 
-export const login: any = createAsyncThunk(
+export const login : any = createAsyncThunk(
   "user/login",
   async (
     credentials: { email: string; password: string },
@@ -23,6 +23,7 @@ export const login: any = createAsyncThunk(
     }
   }
 );
+
 
 export const createAccount: any = createAsyncThunk(
   "user/createAccount",

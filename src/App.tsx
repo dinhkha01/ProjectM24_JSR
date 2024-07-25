@@ -1,5 +1,5 @@
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
+
+import Navbar from "./components/Navbar";
 import Router from "./router";
 
 function App() {
@@ -8,6 +8,7 @@ function App() {
   return (
     <>
       <Router />
+
     </>
   );
 }

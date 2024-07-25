@@ -5,12 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { login } from "../../service/Login-Register/Login_Register";
 import { RootState } from "../../store";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isLoading, error } = useSelector((state: RootState) => state.users);
 
   const onFinish = async (values: { email: string; password: string }) => {
@@ -18,6 +19,11 @@ const Login = () => {
       await dispatch(login(values)).unwrap();
 
       message.success("Đăng nhập thành công!");
+     
+      setTimeout(() => {
+        navigate("/homeUser");
+      }, 1000);
+
     } catch (err) {
       message.error(
         "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
