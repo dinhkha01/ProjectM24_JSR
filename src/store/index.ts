@@ -1,9 +1,12 @@
 // import { reducer } from "./reducers";
 
 import { configureStore } from "@reduxjs/toolkit";
+import { reducer } from "../service/Login-Register/Login_Register";
 
 export const store = configureStore({
-  reducer: {},
+  reducer: {
+    users: reducer,
+  },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
