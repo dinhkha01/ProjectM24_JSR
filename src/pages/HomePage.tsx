@@ -11,7 +11,7 @@ const HomePage = () => {
       <Header style={{ padding: 0, background: '#fff', position: 'fixed', width: '100%', zIndex: 1 }}>
         <Navbar />
       </Header>
-      <Layout style={{ marginTop: 64 }}> 
+      <Layout style={{ marginTop: 65 }}> 
         <Sider 
           width={256} 
           theme="light"
@@ -24,7 +24,7 @@ const HomePage = () => {
         >
           <MenuUser />
         </Sider>
-        <Layout style={{ marginLeft: 256 }}>
+        <Layout style={{ marginLeft: 245 }}>
           <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
             {/* Nội dung chính của trang */}
             <h1>Nội dung trang chủ</h1>
