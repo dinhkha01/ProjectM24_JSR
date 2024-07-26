@@ -1,7 +1,8 @@
 export interface users {
+  id:string;
   email: string;
   password: string;
   name: string;
   phone: string;
-  roll: boolean;
+  role: boolean;
 }

@@ -31,6 +31,7 @@ export const login: any = createAsyncThunk(
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await loginApi(credentials);
+      console.log("API response:", response);
       localStorage.setItem('token', response.accessToken);
       return response;
     } catch (error: any) {
@@ -46,34 +47,24 @@ export const authSlice = createSlice({
     users: [] as users[],
     isLoading: false,
     error: null as string | null,
-    currentUser: null as users | null,
-
+    currentUser: {} as users | null,
   },
   reducers: {
     logout: (state) => {
       state.currentUser = null;
-   
       localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
     builder
-      
       .addCase(registerUser.fulfilled, (state, action) => {
-       
-        state.currentUser = action.payload.user;
-      
+        state.currentUser = action.payload;
         localStorage.setItem('token', action.payload.accessToken);
       })
-      
-     
       .addCase(login.fulfilled, (state, action) => {
-       
         state.currentUser = action.payload.user;
-        
         localStorage.setItem('token', action.payload.accessToken);
       })
-      
   },
 });
 

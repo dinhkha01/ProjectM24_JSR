@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Card, Typography, Divider, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-
 import { RootState } from "../../store";
 import { NavLink, useNavigate } from "react-router-dom";
 import { login } from "../../service/Login-Register/Login_Register";
@@ -12,24 +11,40 @@ const { Title } = Typography;
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state: RootState) => state.users); 
+  const [shouldRedirect, setShouldRedirect] = useState(false);
+  const { isLoading, error, currentUser } = useSelector((state: RootState) => state.users);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (shouldRedirect && currentUser) {
+      timer = setTimeout(() => {
+        if (currentUser.role === true) {
+          navigate("/admin");
+        } else {
+          navigate("/homeUser");
+        }
+      }, 2000); 
+    }
+    return () => clearTimeout(timer);
+  }, [shouldRedirect, currentUser, navigate]);
 
   const onFinish = async (values: { email: string; password: string }) => {
     try {
-      await dispatch(login(values)).unwrap();
-
-      message.success("Đăng nhập thành công!");
-
-      setTimeout(() => {
-        navigate("/homeUser");
-      }, 3000);
+      const result = await dispatch(login(values)).unwrap();
+     
+      
+      if ( result.user.role === true) {
+        message.success("Đăng nhập thành công với quyền admin!");
+      } else {
+        message.success("Đăng nhập thành công!");
+      }
+      setShouldRedirect(true);
     } catch (err) {
-      message.error(
-         "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
-      );
+      message.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.");
     }
   };
 
+ 
   return (
     <div
       style={{
@@ -58,6 +73,7 @@ const Login = () => {
           onFinish={onFinish}
           layout="vertical"
         >
+          {/* Form items remain the same */}
           <Form.Item
             name="email"
             rules={[
