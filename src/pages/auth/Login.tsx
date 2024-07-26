@@ -16,6 +16,15 @@ const Login = () => {
 
   const onFinish = async (values: { email: string; password: string }) => {
     try {
+<<<<<<< HEAD
+      await dispatch(login(values)).unwrap();
+
+      message.success("Đăng nhập thành công!");
+
+      setTimeout(() => {
+        navigate("/homeUser");
+      }, 3000);
+=======
       const resultAction = await dispatch(login(values));
       if (login.fulfilled.match(resultAction)) {
         message.success("Đăng nhập thành công!");
@@ -25,6 +34,7 @@ const Login = () => {
       } else {
         throw new Error(resultAction.error.message);
       }
+>>>>>>> db1f99ed07afb21d6ea7de965efeda393e96be24
     } catch (err) {
       message.error(
          "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."

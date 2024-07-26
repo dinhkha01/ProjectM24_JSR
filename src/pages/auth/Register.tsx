@@ -127,19 +127,15 @@ const Register = () => {
     setLoading(true);
     try {
       const values = await form.validateFields();
-      const { confirmPassword, ...dataToSubmit } = { ...formData, ...values, roll: false };
-   
-      
+      const { confirmPassword, ...dataToSubmit } = { ...formData, ...values };
 
-      const resultAction = await dispatch(registerUser(dataToSubmit));
-      if (registerUser.fulfilled.match(resultAction)) {
-        message.success("Đăng ký thành công!");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      } else {
-        throw new Error(resultAction.error.message);
-      }
+      await dispatch(createAccount(dataToSubmit));
+
+      message.success("Đăng ký thành công!");
+      setTimeout(() => {
+        setLoading(false);
+        navigate("/login");
+      }, 2000);
     } catch (error) {
       message.error("Đăng ký thất bại. Vui lòng thử lại.");
     } finally {
