@@ -128,14 +128,15 @@ const Register = () => {
     try {
       const values = await form.validateFields();
       const { confirmPassword, ...dataToSubmit } = { ...formData, ...values };
-
-      await dispatch(createAccount(dataToSubmit));
-
-      message.success("Đăng ký thành công!");
-      setTimeout(() => {
-        setLoading(false);
-        navigate("/login");
-      }, 2000);
+      const check= await dispatch(registerUser(dataToSubmit));
+      if (registerUser.fulfilled.match(check)) {
+        message.success("Đăng ký thành công!");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        throw new Error(check.error.message);
+      }
     } catch (error) {
       message.error("Đăng ký thất bại. Vui lòng thử lại.");
     } finally {
@@ -266,7 +267,7 @@ const Register = () => {
           style={{ color: "#FF69B4", fontSize: "16px" }}
           disabled={loading}
         >
-          <NavLink to="/login"> Đã có tài khoản? Đăng nhập</NavLink>
+          <NavLink to="/"> Đã có tài khoản? Đăng nhập</NavLink>
         </Button>
       </Card>
     </div>

@@ -2,24 +2,11 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "..";
 import { users } from "../../config/interface";
 
-<<<<<<< HEAD
-export const login: any = createAsyncThunk(
-  "user/login",
-  async (
-    credentials: { email: string; password: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await api.get("users");
-      const users = response.data;
-      const user = users.find((u: users) => u.email === credentials.email);
-=======
 // Auth API functions
 export const registerApi = async (user: users) => {
   const res = await api.post("register", user);
   return res.data;
 };
->>>>>>> db1f99ed07afb21d6ea7de965efeda393e96be24
 
 export const loginApi = async (data: { email: string; password: string }) => {
   const res = await api.post("login", data);
@@ -39,13 +26,6 @@ export const registerUser :any = createAsyncThunk(
   }
 );
 
-<<<<<<< HEAD
-export const createAccount: any = createAsyncThunk(
-  "user/createAccount",
-  async (data: {}) => {
-    const res = await api.post("users", data);
-    return res.data;
-=======
 export const login: any = createAsyncThunk(
   "user/login",
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
@@ -56,7 +36,6 @@ export const login: any = createAsyncThunk(
     } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
->>>>>>> db1f99ed07afb21d6ea7de965efeda393e96be24
   }
 );
 
@@ -79,8 +58,6 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-<<<<<<< HEAD
-=======
       
       .addCase(registerUser.fulfilled, (state, action) => {
        
@@ -90,7 +67,6 @@ export const authSlice = createSlice({
       })
       
      
->>>>>>> db1f99ed07afb21d6ea7de965efeda393e96be24
       .addCase(login.fulfilled, (state, action) => {
        
         state.currentUser = action.payload.user;
