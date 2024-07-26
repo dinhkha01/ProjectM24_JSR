@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "..";
 import { users } from "../../config/interface";
 
-export const login : any = createAsyncThunk(
+export const login: any = createAsyncThunk(
   "user/login",
   async (
     credentials: { email: string; password: string },
@@ -24,19 +24,11 @@ export const login : any = createAsyncThunk(
   }
 );
 
-
 export const createAccount: any = createAsyncThunk(
   "user/createAccount",
   async (data: {}) => {
     const res = await api.post("users", data);
     return res.data;
-  }
-);
-export const getAllUser: any = createAsyncThunk(
-  "products/getProducts",
-  async () => {
-    const response = await api.get("users");
-    return response.data;
   }
 );
 
@@ -51,10 +43,6 @@ export const user = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getAllUser.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.user = action.payload;
-      })
       .addCase(login.fulfilled, (state, action) => {
         state.currentUser = action.payload;
       })

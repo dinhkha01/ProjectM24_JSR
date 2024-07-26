@@ -133,7 +133,7 @@ const Register = () => {
       message.success("Đăng ký thành công!");
       setTimeout(() => {
         setLoading(false);
-        navigate("/login");
+        navigate("/");
       }, 2000);
     } catch (error) {
       setLoading(false);

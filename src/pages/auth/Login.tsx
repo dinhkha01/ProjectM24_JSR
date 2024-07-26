@@ -19,11 +19,10 @@ const Login = () => {
       await dispatch(login(values)).unwrap();
 
       message.success("Đăng nhập thành công!");
-     
+
       setTimeout(() => {
         navigate("/homeUser");
       }, 3000);
-
     } catch (err) {
       message.error(
         "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
