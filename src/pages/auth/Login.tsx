@@ -22,7 +22,7 @@ const Login = () => {
      
       setTimeout(() => {
         navigate("/homeUser");
-      }, 1000);
+      }, 3000);
 
     } catch (err) {
       message.error(

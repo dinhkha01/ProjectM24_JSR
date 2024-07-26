@@ -1,10 +1,10 @@
 // admin :   localhost:5173/admin/acccount
 // user :    localhost:5173/home
-import React from "react";
+
 import { Route, Routes } from "react-router-dom";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
-import Navbar from "../components/Navbar";
+import HomePage from "../pages/HomePage";
 
 const Router = () => {
   return (
@@ -12,7 +12,7 @@ const Router = () => {
       <Routes>
         <Route path="/registor" element={<Register />} />
         <Route path="/" element={<Login />} />
-        <Route path="/homeUser" element={<Navbar/>} />
+        <Route path="/homeUser" element={<HomePage/>} />
       </Routes>
     </div>
   );
