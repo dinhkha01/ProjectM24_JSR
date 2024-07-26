@@ -2,66 +2,80 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "..";
 import { users } from "../../config/interface";
 
-export const login : any = createAsyncThunk(
-  "user/login",
-  async (
-    credentials: { email: string; password: string },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await api.get("users");
-      const users = response.data;
-      const user = users.find((u: users) => u.email === credentials.email);
+// Auth API functions
+export const registerApi = async (user: users) => {
+  const res = await api.post("register", user);
+  return res.data;
+};
 
-      if (user && user.password === credentials.password) {
-        return user;
-      } else {
-        return rejectWithValue("Email hoặc mật khẩu không chính xác");
-      }
-    } catch (error) {
-      return rejectWithValue("Có lỗi xảy ra khi đăng nhập");
+export const loginApi = async (data: { email: string; password: string }) => {
+  const res = await api.post("login", data);
+  return res.data;
+};
+
+// Async thunks
+export const registerUser :any = createAsyncThunk(
+  'user/register',
+  async (data: users, { rejectWithValue }) => {
+    try {
+      const response = await registerApi(data);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
     }
   }
 );
 
-
-export const createAccount: any = createAsyncThunk(
-  "user/createAccount",
-  async (data: {}) => {
-    const res = await api.post("users", data);
-    return res.data;
-  }
-);
-export const getAllUser: any = createAsyncThunk(
-  "products/getProducts",
-  async () => {
-    const response = await api.get("users");
-    return response.data;
+export const login: any = createAsyncThunk(
+  "user/login",
+  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+    try {
+      const response = await loginApi(credentials);
+      localStorage.setItem('token', response.accessToken);
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 
-export const user = createSlice({
-  name: "user",
+// Slice
+export const authSlice = createSlice({
+  name: "auth",
   initialState: {
-    user: [] as users[],
+    users: [] as users[],
     isLoading: false,
-    error: null,
-    currentUser: null,
+    error: null as string | null,
+    currentUser: null as users | null,
+
   },
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.currentUser = null;
+   
+      localStorage.removeItem('token');
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(getAllUser.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.user = action.payload;
+      
+      .addCase(registerUser.fulfilled, (state, action) => {
+       
+        state.currentUser = action.payload.user;
+      
+        localStorage.setItem('token', action.payload.accessToken);
       })
+      
+     
       .addCase(login.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
+       
+        state.currentUser = action.payload.user;
+        
+        localStorage.setItem('token', action.payload.accessToken);
       })
-      .addCase(createAccount.fulfilled, (state, action) => {
-        state.user = [...state.user, action.payload];
-      });
+      
   },
 });
 
-export const { reducer } = user;
+export const { logout } = authSlice.actions;
+export const reducer = authSlice.reducer;

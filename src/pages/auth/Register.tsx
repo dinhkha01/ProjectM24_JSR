@@ -16,9 +16,10 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { createAccount } from "../../service/Login-Register/Login_Register";
+
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { registerUser } from "../../service/Login-Register/Login_Register";
 
 const { Title } = Typography;
 const { Step } = Steps;
@@ -126,18 +127,23 @@ const Register = () => {
     setLoading(true);
     try {
       const values = await form.validateFields();
-      const { confirmPassword, ...dataToSubmit } = { ...formData, ...values };
+      const { confirmPassword, ...dataToSubmit } = { ...formData, ...values, roll: false };
+   
+      
 
-      await dispatch(createAccount(dataToSubmit));
-
-      message.success("Đăng ký thành công!");
-      setTimeout(() => {
-        setLoading(false);
-        navigate("/login");
-      }, 2000);
+      const resultAction = await dispatch(registerUser(dataToSubmit));
+      if (registerUser.fulfilled.match(resultAction)) {
+        message.success("Đăng ký thành công!");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      } else {
+        throw new Error(resultAction.error.message);
+      }
     } catch (error) {
-      setLoading(false);
       message.error("Đăng ký thất bại. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 
