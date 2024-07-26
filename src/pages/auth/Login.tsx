@@ -3,19 +3,20 @@ import { Form, Input, Button, Card, Typography, Divider, message } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 
-import { login } from "../../service/Login-Register/Login_Register";
 import { RootState } from "../../store";
 import { NavLink, useNavigate } from "react-router-dom";
+import { login } from "../../service/Login-Register/Login_Register";
 
 const { Title } = Typography;
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isLoading, error } = useSelector((state: RootState) => state.users);
+  const { isLoading, error } = useSelector((state: RootState) => state.users); 
 
   const onFinish = async (values: { email: string; password: string }) => {
     try {
+<<<<<<< HEAD
       await dispatch(login(values)).unwrap();
 
       message.success("Đăng nhập thành công!");
@@ -23,9 +24,20 @@ const Login = () => {
       setTimeout(() => {
         navigate("/homeUser");
       }, 3000);
+=======
+      const resultAction = await dispatch(login(values));
+      if (login.fulfilled.match(resultAction)) {
+        message.success("Đăng nhập thành công!");
+        setTimeout(() => {
+          navigate("/homeUser");
+        }, 1000); // Giảm thời gian chờ xuống 1 giây
+      } else {
+        throw new Error(resultAction.error.message);
+      }
+>>>>>>> db1f99ed07afb21d6ea7de965efeda393e96be24
     } catch (err) {
       message.error(
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
+         "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
       );
     }
   };

@@ -16,9 +16,10 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
-import { createAccount } from "../../service/Login-Register/Login_Register";
+
 import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { registerUser } from "../../service/Login-Register/Login_Register";
 
 const { Title } = Typography;
 const { Step } = Steps;
@@ -133,11 +134,12 @@ const Register = () => {
       message.success("Đăng ký thành công!");
       setTimeout(() => {
         setLoading(false);
-        navigate("/");
+        navigate("/login");
       }, 2000);
     } catch (error) {
-      setLoading(false);
       message.error("Đăng ký thất bại. Vui lòng thử lại.");
+    } finally {
+      setLoading(false);
     }
   };
 
