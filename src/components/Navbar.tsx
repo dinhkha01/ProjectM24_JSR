@@ -78,7 +78,7 @@ export default function Navbar() {
   
     navigate('/');
     
-    // Đóng menu user
+   localStorage.removeItem('token');
     handleUserMenuClose();
   };
 
