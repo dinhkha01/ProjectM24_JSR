@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, Card, Col, Layout } from "antd";
 import Navbar from "../components/Navbar";
 import MenuUser from "../components/Menu";
+import MenuR from "../components/MenuR";
 
 const { Header, Sider, Content } = Layout;
 
@@ -33,6 +34,7 @@ const HomePage = () => {
           <MenuUser />
         </Sider>
         <Layout style={{ marginLeft: 245 }}>
+        
           <Content
             style={{
               margin: "24px 16px",
@@ -44,21 +46,11 @@ const HomePage = () => {
             {/* Nội dung chính của trang */}
             <h1>Nội dung trang chủ</h1>
           </Content>
+   
         </Layout>
-        <Col span={8}>
-          <Card title="Stories">
-            <Avatar.Group>
-              <Avatar src="https://via.placeholder.com/40x40" />
-              <Avatar src="https://via.placeholder.com/40x40" />
-              <Avatar src="https://via.placeholder.com/40x40" />
-              <Avatar src="https://via.placeholder.com/40x40" />
-            </Avatar.Group>
-          </Card>
-          <Card title="Suggestions" style={{ marginTop: 16 }}>
-            <p>User 1</p>
-            <p>User 2</p>
-            <p>User 3</p>
-          </Card>
+        <Col span={5}  >
+        <div   style={{position: "fixed",}}><MenuR  /></div>
+          
         </Col>
       </Layout>
     </Layout>
