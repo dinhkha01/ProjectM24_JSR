@@ -1,3 +1,4 @@
+import { getAllPost } from "./Post";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { api } from "..";
 import { users } from "../../config/interface";
@@ -14,8 +15,8 @@ export const loginApi = async (data: { email: string; password: string }) => {
 };
 
 // Async thunks
-export const registerUser :any = createAsyncThunk(
-  'user/register',
+export const registerUser: any = createAsyncThunk(
+  "user/register",
   async (data: users, { rejectWithValue }) => {
     try {
       const response = await registerApi(data);
@@ -28,15 +29,25 @@ export const registerUser :any = createAsyncThunk(
 
 export const login: any = createAsyncThunk(
   "user/login",
-  async (credentials: { email: string; password: string }, { rejectWithValue }) => {
+  async (
+    credentials: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await loginApi(credentials);
       console.log("API response:", response);
-      localStorage.setItem('token', response.accessToken);
+      localStorage.setItem("token", response.accessToken);
       return response;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
+  }
+);
+export const getAllUsers: any = createAsyncThunk(
+  "user/getAllUsers",
+  async () => {
+    const res = await api.get("users");
+    return res.data;
   }
 );
 
@@ -49,21 +60,24 @@ export const authSlice = createSlice({
     error: null as string | null,
     currentUser: {} as users | null,
   },
-  reducers: {
-  
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.fulfilled, (state, action) => {
         state.currentUser = action.payload;
-        localStorage.setItem('token', action.payload.accessToken);
+
+        localStorage.setItem("token", action.payload.accessToken);
       })
       .addCase(login.fulfilled, (state, action) => {
         state.currentUser = action.payload.user;
-        localStorage.setItem('token', action.payload.accessToken);
+
+        localStorage.setItem("token", action.payload.accessToken);
+        localStorage.setItem("userId", action.payload.user.id);
       })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
+        state.users = action.payload;
+      });
   },
 });
-
 
 export const reducer = authSlice.reducer;

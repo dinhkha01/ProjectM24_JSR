@@ -1,11 +1,11 @@
-// import { reducer } from "./reducers";
-
 import { configureStore } from "@reduxjs/toolkit";
-import { reducer } from "../service/Login-Register/Login_Register";
+import { reducer as reducerUser } from "../service/Login-Register/Login_Register";
+import { reducer as reducerPost } from "../service/Login-Register/Post";
 
 export const store = configureStore({
   reducer: {
-    users: reducer,
+    users: reducerUser,
+    post: reducerPost,
   },
 });
 

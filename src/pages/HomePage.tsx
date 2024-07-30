@@ -1,8 +1,9 @@
-import React from "react";
-import { Avatar, Card, Col, Layout } from "antd";
-import Navbar from "../components/Navbar";
-import MenuUser from "../components/Menu";
-import MenuR from "../components/MenuR";
+import { Col, Layout, Row } from "antd";
+import MenuUser from "../components/User/Menu";
+import MenuR from "../components/User/MenuR";
+import Navbar from "../components/User/Navbar";
+import TrangChu from "../components/User/TrangChu";
+import { Outlet } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
@@ -33,24 +34,26 @@ const HomePage = () => {
         >
           <MenuUser />
         </Sider>
-        <Layout style={{ marginLeft: 245 }}>
-        
+        <Layout style={{ marginLeft: 256 }}>
           <Content
             style={{
               margin: "24px 16px",
               padding: 24,
-              background: "#fff",
+              background: "#f0f2f5",
               minHeight: 280,
             }}
           >
-            {/* Nội dung chính của trang */}
-            <h1>Nội dung trang chủ</h1>
+            <Row gutter={[16, 16]}>
+              <Col span={14} offset={5}>
+                <Outlet />
+              </Col>
+            </Row>
           </Content>
-   
         </Layout>
-        <Col span={5}  >
-        <div   style={{position: "fixed",}}><MenuR  /></div>
-          
+        <Col span={5}>
+          <div style={{ position: "fixed", right: 30, top: 100 }}>
+            <MenuR />
+          </div>
         </Col>
       </Layout>
     </Layout>

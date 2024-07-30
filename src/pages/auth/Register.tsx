@@ -127,8 +127,13 @@ const Register = () => {
     setLoading(true);
     try {
       const values = await form.validateFields();
-      const { confirmPassword, ...dataToSubmit } = { ...formData, ...values, role: false };
-      const check= await dispatch(registerUser(dataToSubmit));
+      const { confirmPassword, ...dataToSubmit } = {
+        ...formData,
+        ...values,
+        role: false,
+        avatar: "",
+      };
+      const check = await dispatch(registerUser(dataToSubmit));
       if (registerUser.fulfilled.match(check)) {
         message.success("Đăng ký thành công!");
         setTimeout(() => {

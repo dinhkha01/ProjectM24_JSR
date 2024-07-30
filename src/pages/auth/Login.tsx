@@ -12,18 +12,23 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const { isLoading, error, currentUser } = useSelector((state: RootState) => state.users);
+  const { isLoading, error, currentUser } = useSelector(
+    (state: RootState) => state.users
+  );
+  console.log(currentUser);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (shouldRedirect && currentUser) {
+      console.log(currentUser.email);
+
       timer = setTimeout(() => {
         if (currentUser.role === true) {
           navigate("/admin");
         } else {
-          navigate("/homeUser");
+          navigate("/");
         }
-      }, 2000); 
+      }, 2000);
     }
     return () => clearTimeout(timer);
   }, [shouldRedirect, currentUser, navigate]);
@@ -31,20 +36,20 @@ const Login = () => {
   const onFinish = async (values: { email: string; password: string }) => {
     try {
       const result = await dispatch(login(values)).unwrap();
-     
-      
-      if ( result.user.role === true) {
+
+      if (result.user.role === true) {
         message.success("Đăng nhập thành công với quyền admin!");
       } else {
         message.success("Đăng nhập thành công!");
       }
       setShouldRedirect(true);
     } catch (err) {
-      message.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập.");
+      message.error(
+        "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin đăng nhập."
+      );
     }
   };
 
- 
   return (
     <div
       style={{
