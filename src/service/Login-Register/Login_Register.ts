@@ -1,6 +1,6 @@
 import { getAllPost } from "./Post";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "..";
+import { api, auth } from "..";
 import { users } from "../../config/interface";
 
 // Auth API functions
@@ -51,6 +51,20 @@ export const getAllUsers: any = createAsyncThunk(
   }
 );
 
+export const autoLogin: any = createAsyncThunk("user/autoLogin", async () => {
+  const userId = localStorage.getItem("userId");
+  const res = await auth.get("/660/users/" + userId);
+  return res.data;
+});
+export const avatar: any = createAsyncThunk(
+  "user/avatar",
+  async (avatar: string) => {
+    const idUser = localStorage.getItem("userId");
+
+    const res = await api.patch("users/" + idUser, { avatar });
+    return res.data;
+  }
+);
 // Slice
 export const authSlice = createSlice({
   name: "auth",
@@ -76,6 +90,22 @@ export const authSlice = createSlice({
       })
       .addCase(getAllUsers.fulfilled, (state, action) => {
         state.users = action.payload;
+      })
+      .addCase(autoLogin.fulfilled, (state, action) => {
+        state.currentUser = {
+          id: action.payload.id,
+          name: action.payload.name,
+          email: action.payload.email,
+          phone: action.payload.phone,
+          role: action.payload.role,
+          avatar: action.payload.avatar,
+          password: "",
+        };
+      })
+      .addCase(avatar.fulfilled, (state, action) => {
+        if (state.currentUser) {
+          state.currentUser.avatar = action.payload.avatar;
+        }
       });
   },
 });

@@ -8,6 +8,8 @@ import { Outlet } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 const HomePage = () => {
+  const a = 0;
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header
@@ -23,7 +25,7 @@ const HomePage = () => {
       </Header>
       <Layout style={{ marginTop: 65 }}>
         <Sider
-          width={256}
+          width={200}
           theme="light"
           style={{
             overflow: "auto",
@@ -34,7 +36,7 @@ const HomePage = () => {
         >
           <MenuUser />
         </Sider>
-        <Layout style={{ marginLeft: 256 }}>
+        <Layout style={{ marginLeft: 200 }}>
           <Content
             style={{
               margin: "24px 16px",
@@ -43,18 +45,18 @@ const HomePage = () => {
               minHeight: 280,
             }}
           >
-            <Row gutter={[16, 16]}>
-              <Col span={14} offset={5}>
+            <Row>
+              <Col span={18} offset={1}>
                 <Outlet />
+              </Col>
+              <Col span={4}>
+                <div style={{ position: "fixed", right: 30, top: 100 }}>
+                  <MenuR />
+                </div>
               </Col>
             </Row>
           </Content>
         </Layout>
-        <Col span={5}>
-          <div style={{ position: "fixed", right: 30, top: 100 }}>
-            <MenuR />
-          </div>
-        </Col>
       </Layout>
     </Layout>
   );

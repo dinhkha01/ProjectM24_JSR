@@ -1,3 +1,4 @@
+import React, { useEffect, useState, useMemo } from "react";
 import {
   EllipsisOutlined,
   HeartOutlined,
@@ -15,17 +16,14 @@ import {
   Form,
   Upload,
   message,
-  Carousel,
   Image,
 } from "antd";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { getAllPost, createPost } from "../../service/Login-Register/Post";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../config/firebase";
-import { Outlet } from "react-router-dom";
 import { getAllUsers } from "../../service/Login-Register/Login_Register";
 
 const { Meta } = Card;
@@ -36,16 +34,25 @@ const TrangChu = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
+  const [currentPostImages, setCurrentPostImages] = useState<string[]>([]);
   const dispatch = useDispatch();
   const posts = useSelector((state: RootState) => state.post.post);
-  const userId = useSelector((state: RootState) => state.users.currentUser);
-  console.log(userId?.id);
+  console.log(posts);
 
+  const userId = useSelector((state: RootState) => state.users.currentUser);
   const users = useSelector((state: RootState) => state.users.users);
+
+  const sortedPosts = useMemo(() => {
+    return [...posts].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [posts]);
+
   const getUserName = (userId: number) => {
     const user = users.find((user) => user.id === userId);
     return user ? user.name : "Người dùng ẩn danh";
   };
+
   const getUserAvatar = (userId: number) => {
     const user = users.find((user) => user.id === userId);
     return user && user.avatar ? user.avatar : "https://via.placeholder.com/32";
@@ -73,7 +80,6 @@ const TrangChu = () => {
 
       let imageUrls: string[] = [];
 
-      // Upload images to Firebase
       for (const file of fileList) {
         const imageRef = ref(storage, `images/${file.name}`);
         const snapshot = await uploadBytes(imageRef, file as RcFile);
@@ -81,7 +87,6 @@ const TrangChu = () => {
         imageUrls.push(url);
       }
 
-      // Prepare data for API
       const postData = {
         content,
         img: imageUrls,
@@ -117,9 +122,10 @@ const TrangChu = () => {
     fileList,
   };
 
-  const handlePreview = (imageUrl: any) => {
+  const handlePreview = (imageUrl: string, postImages: string[]) => {
     setPreviewImage(imageUrl);
     setPreviewVisible(true);
+    setCurrentPostImages(postImages);
   };
 
   const handlePreviewClose = () => {
@@ -130,83 +136,156 @@ const TrangChu = () => {
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
-        flexWrap: "wrap",
-        gap: "12px",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "16px",
+        maxWidth: "680px",
+        margin: "0 auto",
       }}
     >
       <Card
-        style={{ marginBottom: "12px", width: "900px" }}
+        style={{ width: "100%", cursor: "pointer" }}
         onClick={handlePostClick}
       >
         <Meta
-          avatar={<Avatar src="https://via.placeholder.com/32" />}
+          avatar={<Avatar src={userId?.avatar} />}
           title={
             <div style={{ display: "flex", alignItems: "center" }}>
-              <span style={{ fontWeight: "bold" }}>Bạn đang nghĩ gì thế?</span>
+              <span style={{ fontWeight: "bold" }}>
+                {userId?.name}, bạn đang nghĩ gì thế?
+              </span>
               <PlusOutlined style={{ marginLeft: "auto" }} />
             </div>
           }
         />
       </Card>
 
-      {posts.map((post) => (
+      {sortedPosts.map((post) => (
         <Card
           key={post.id}
-          style={{ marginBottom: "10px", width: "400px" }}
+          style={{ width: "100%" }}
           actions={[
-            <HeartOutlined key="like" style={{ fontSize: "24px" }} />,
-            <MessageOutlined key="comment" style={{ fontSize: "24px" }} />,
-            <SendOutlined key="share" style={{ fontSize: "24px" }} />,
+            <div
+              key="like"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <HeartOutlined style={{ fontSize: "20px", marginRight: "5px" }} />
+              <span>Thích</span>
+            </div>,
+            <div
+              key="comment"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MessageOutlined
+                style={{ fontSize: "20px", marginRight: "5px" }}
+              />
+              <span>Bình luận</span>
+            </div>,
+            <div
+              key="share"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <SendOutlined style={{ fontSize: "20px", marginRight: "5px" }} />
+              <span>Chia sẻ</span>
+            </div>,
           ]}
         >
           <Meta
-            avatar={
-              <Avatar
-                src={
-                  post.userId
-                    ? getUserAvatar(post.userId)
-                    : "https://via.placeholder.com/32"
-                }
-              />
-            }
+            avatar={<Avatar src={getUserAvatar(post.userId)} />}
             title={
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <span style={{ fontWeight: "bold" }}>
-                  {getUserName(post.userId)}
-                </span>
-                <EllipsisOutlined style={{ marginLeft: "auto" }} />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <div>
+                  <span style={{ fontWeight: "bold" }}>
+                    {getUserName(post.userId)}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "12px",
+                      color: "#65676B",
+                      marginLeft: "8px",
+                    }}
+                  >
+                    {new Date(post.date).toLocaleString()}
+                  </span>
+                </div>
+                <EllipsisOutlined />
               </div>
             }
           />
           <div style={{ padding: "16px 0" }}>{post.content}</div>
           {post.img.length > 0 && (
-            <Carousel>
-              {post.img.map((imageUrl, index) => (
-                <div key={index}>
-                  <img
-                    alt={`Post content ${index + 1}`}
-                    src={imageUrl}
+            <div style={{ marginTop: "16px" }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridGap: "2px",
+                  gridTemplateColumns: `repeat(${Math.min(
+                    post.img.length,
+                    3
+                  )}, 1fr)`,
+                }}
+              >
+                {post.img.map((imageUrl, index) => (
+                  <div
+                    key={index}
                     style={{
-                      cursor: "pointer",
-                      width: "100%",
-                      height: "auto",
-                      maxHeight: "400px",
-                      objectFit: "contain",
+                      position: "relative",
+                      paddingTop: "100%",
+                      overflow: "hidden",
                     }}
-                    onClick={() => handlePreview(imageUrl)}
-                  />
-                </div>
-              ))}
-            </Carousel>
+                  >
+                    <img
+                      alt={`Post content ${index + 1}`}
+                      src={imageUrl}
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => handlePreview(imageUrl, post.img)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
           <Input
-            placeholder="Thêm bình luận..."
+            placeholder="Viết bình luận..."
+            prefix={
+              <Avatar
+                src={userId?.avatar}
+                size={24}
+                style={{ marginRight: "8px" }}
+              />
+            }
             style={{
-              background: "transparent",
+              background: "#F0F2F5",
               border: "none",
-              outline: "none",
-              paddingLeft: "16px",
+              borderRadius: "20px",
+              padding: "8px 12px",
               marginTop: "16px",
             }}
           />
@@ -214,7 +293,6 @@ const TrangChu = () => {
       ))}
 
       <Image
-        width={200}
         style={{ display: "none" }}
         preview={{
           visible: previewVisible,
