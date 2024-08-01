@@ -56,13 +56,43 @@ export const autoLogin: any = createAsyncThunk("user/autoLogin", async () => {
   const res = await auth.get("/660/users/" + userId);
   return res.data;
 });
-export const avatar: any = createAsyncThunk(
+export const pushAvatar: any = createAsyncThunk(
   "user/avatar",
   async (avatar: string) => {
     const idUser = localStorage.getItem("userId");
 
     const res = await api.patch("users/" + idUser, { avatar });
     return res.data;
+  }
+);
+export const pushBanner: any = createAsyncThunk(
+  "user/banner",
+  async (banner: string) => {
+    const idUser = localStorage.getItem("userId");
+    const res = await api.patch("users/" + idUser, { banner });
+    return res.data;
+  }
+);
+export const updateFriendsApi = async (userId: number, newFriends: any[]) => {
+  const res = await api.patch(`users/${userId}`, { friends: newFriends });
+  console.log("res", res.data);
+
+  return res.data;
+};
+export const updateFriends: any = createAsyncThunk(
+  "user/updateFriends",
+  async (newFriends: any[], { getState, rejectWithValue }) => {
+    try {
+      const state: any = getState();
+      console.log("vo");
+      const userId = state.users.currentUser.id;
+
+      const response = await updateFriendsApi(userId, newFriends);
+
+      return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
   }
 );
 // Slice
@@ -100,11 +130,26 @@ export const authSlice = createSlice({
           role: action.payload.role,
           avatar: action.payload.avatar,
           password: "",
+          banner: action.payload.banner,
+          friends: action.payload.friends,
+          notyfi: action.payload.notyfi,
         };
       })
-      .addCase(avatar.fulfilled, (state, action) => {
+      .addCase(pushAvatar.fulfilled, (state, action) => {
         if (state.currentUser) {
           state.currentUser.avatar = action.payload.avatar;
+        }
+      })
+      .addCase(pushBanner.fulfilled, (state, action) => {
+        if (state.currentUser) {
+          state.currentUser.banner = action.payload.banner;
+        }
+      })
+      .addCase(updateFriends.fulfilled, (state, action) => {
+        if (state.currentUser) {
+          console.log("action.payload", action.payload);
+
+          state.currentUser.friends = action.payload.friends;
         }
       });
   },

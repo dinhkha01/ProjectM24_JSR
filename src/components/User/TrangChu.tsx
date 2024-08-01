@@ -37,9 +37,10 @@ const TrangChu = () => {
   const [currentPostImages, setCurrentPostImages] = useState<string[]>([]);
   const dispatch = useDispatch();
   const posts = useSelector((state: RootState) => state.post.post);
-  console.log(posts);
 
   const userId = useSelector((state: RootState) => state.users.currentUser);
+  console.log("userId", userId);
+
   const users = useSelector((state: RootState) => state.users.users);
 
   const sortedPosts = useMemo(() => {

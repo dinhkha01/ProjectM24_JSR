@@ -10,6 +10,8 @@ import Admin from "../pages/Admin";
 import Frends from "../components/User/Frends";
 import TrangChu from "../components/User/TrangChu";
 import Profile from "../components/User/Profile";
+import Friends from "../components/User/Frends";
+import Notify from "../components/User/Notify";
 
 const Router = () => {
   return (
@@ -20,8 +22,9 @@ const Router = () => {
 
         <Route path="/" element={<HomePage />}>
           <Route index element={<TrangChu />} />
-          <Route path="frends" element={<Frends />} />
+          <Route path="frends" element={<Friends />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="notify" element={<Notify />} />
         </Route>
 
         <Route path="/admin" element={<Admin />} />

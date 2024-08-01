@@ -6,7 +6,6 @@ import { RootState } from "../../store";
 
 const MenuR = () => {
   const user = useSelector((state: RootState) => state.users.currentUser);
-  console.log(user);
 
   return (
     <div>

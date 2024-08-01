@@ -22,10 +22,9 @@ const MenuUser = () => {
 
   const menuItems = [
     { to: "/", icon: <HomeIcon />, text: "Trang chủ" },
-    { to: "", icon: <ExploreIcon />, text: "Bảng tin" },
     { to: "frends", icon: <VideoLibraryIcon />, text: "Bạn Bè" },
     { to: "messages", icon: <MailIcon />, text: "Tin nhắn" },
-    { to: "notifications", icon: <NotificationsIcon />, text: "Thông báo" },
+    { to: "notify", icon: <NotificationsIcon />, text: "Thông báo" },
     { to: "profile", icon: <AccountCircle />, text: "Trang cá nhân" },
   ];
 

@@ -31,7 +31,10 @@ import { createPost, getAllPost } from "../../service/Login-Register/Post";
 import { storage } from "../../config/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
-import { avatar } from "../../service/Login-Register/Login_Register";
+import {
+  pushAvatar,
+  pushBanner,
+} from "../../service/Login-Register/Login_Register";
 
 const { TabPane } = Tabs;
 const { Title, Text } = Typography;
@@ -40,6 +43,8 @@ const { Meta } = Card;
 const Profile = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.users.currentUser);
+  console.log(user);
+
   const posts = useSelector((state: RootState) => state.post.post);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -48,10 +53,10 @@ const Profile = () => {
 
   const userPosts = posts.filter((post) => post.userId === user?.id);
   const sortedPosts = useMemo(() => {
-    return [...posts].sort(
+    return [...userPosts].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-  }, [posts]);
+  }, [userPosts]);
 
   const handlePostClick = () => {
     setIsModalVisible(true);
@@ -116,16 +121,17 @@ const Profile = () => {
     const imageRef = ref(storage, `avatars/${user?.id}`);
     await uploadBytes(imageRef, file);
     const url = await getDownloadURL(imageRef);
-    dispatch(avatar(url));
+
+    dispatch(pushAvatar(url));
 
     message.success("Ảnh đại diện đã được cập nhật");
   };
 
-  const handleCoverUpload = async (file: RcFile) => {
+  const handleBannerUpload = async (file: RcFile) => {
     const imageRef = ref(storage, `covers/${user?.id}`);
     await uploadBytes(imageRef, file);
     const url = await getDownloadURL(imageRef);
-    console.log(url);
+    dispatch(pushBanner(url));
 
     message.success("Ảnh bìa đã được cập nhật");
   };
@@ -144,7 +150,7 @@ const Profile = () => {
           >
             <Image
               alt="cover"
-              src={user?.avatar || "https://via.placeholder.com/940x300"}
+              src={user?.banner || "https://via.placeholder.com/940x300"}
               style={{
                 height: "100%",
                 width: "100%",
@@ -155,7 +161,7 @@ const Profile = () => {
             <Upload
               accept="image/*"
               showUploadList={false}
-              beforeUpload={handleCoverUpload}
+              beforeUpload={handleBannerUpload}
             >
               <Button
                 icon={<CameraOutlined />}

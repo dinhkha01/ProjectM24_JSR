@@ -6,8 +6,20 @@ export interface users {
   phone: string;
   role: boolean;
   avatar: string;
+  banner: string;
+  friends: FriendType[];
+  notyfi: notyfiType[];
 }
-
+type FriendType = {
+  useId: number;
+  status: "pending" | "accept" | "blocked";
+  add_at: string;
+};
+type notyfiType = {
+  userId: number;
+  content: string;
+  date: string;
+};
 export interface post {
   content: string;
   img: string[];

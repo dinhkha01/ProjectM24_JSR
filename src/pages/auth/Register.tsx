@@ -132,6 +132,7 @@ const Register = () => {
         ...values,
         role: false,
         avatar: "",
+        banner: "",
       };
       const check = await dispatch(registerUser(dataToSubmit));
       if (registerUser.fulfilled.match(check)) {

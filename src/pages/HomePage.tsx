@@ -8,8 +8,6 @@ import { Outlet } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 const HomePage = () => {
-  const a = 0;
-
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Header
