@@ -3,7 +3,11 @@ import { List, Avatar, Typography, Button, Divider, message } from "antd";
 import { BellOutlined, UserOutlined, UserAddOutlined } from "@ant-design/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../store";
-import { getAllUsers } from "../../service/Login-Register/Login_Register";
+import {
+  acceptFriendRequest,
+  getAllUsers,
+  rejectFriendRequest,
+} from "../../service/Login-Register/Login_Register";
 
 const { Title, Text } = Typography;
 
@@ -12,15 +16,17 @@ interface FriendRequest {
   userId: number;
   date: string;
 }
+interface CurrentUser {
+  id: number;
+  notyfi: FriendRequest[];
+  friends: { userId: number; status: string }[];
+}
 
-const Notify: React.FC = () => {
+const Notify = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser
-  ) as {
-    notyfi: FriendRequest[];
-    friends: { userId: number; status: string }[];
-  } | null;
+  ) as CurrentUser | null;
   const allUsers = useSelector((state: RootState) => state.users.users);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
 
@@ -44,19 +50,45 @@ const Notify: React.FC = () => {
   }, [currentUser]);
 
   const handleAccept = (userId: number) => {
-    // Implement the logic to accept friend request
-    message.success("Đã chấp nhận lời mời kết bạn");
-    setFriendRequests(
-      friendRequests.filter((request) => request.userId !== userId)
-    );
+    if (currentUser) {
+      dispatch(
+        acceptFriendRequest({
+          currentUserId: currentUser.id,
+          friendId: userId,
+        })
+      )
+        .then(() => {
+          message.success("Đã chấp nhận lời mời kết bạn");
+          setFriendRequests(
+            friendRequests.filter((request) => request.userId !== userId)
+          );
+        })
+        .catch((error: any) => {
+          message.error(
+            "Không thể chấp nhận lời mời kết bạn: " + error.message
+          );
+        });
+    }
   };
 
   const handleDecline = (userId: number) => {
-    // Implement the logic to decline friend request
-    message.info("Đã từ chối lời mời kết bạn");
-    setFriendRequests(
-      friendRequests.filter((request) => request.userId !== userId)
-    );
+    if (currentUser) {
+      dispatch(
+        rejectFriendRequest({
+          currentUserId: currentUser.id,
+          friendId: userId,
+        })
+      )
+        .then(() => {
+          message.info("Đã từ chối lời mời kết bạn");
+          setFriendRequests(
+            friendRequests.filter((request) => request.userId !== userId)
+          );
+        })
+        .catch((error: any) => {
+          message.error("Không thể từ chối lời mời kết bạn: " + error.message);
+        });
+    }
   };
 
   const getUserInfo = (userId: number) => {
@@ -101,7 +133,11 @@ const Notify: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => handleAccept(item.userId)}
-                    style={{ marginRight: 8 }}
+                    style={{
+                      marginRight: 8,
+                      backgroundColor: "#FF69B4",
+                      borderColor: "#FF69B4",
+                    }}
                   >
                     Đồng ý
                   </Button>,
@@ -141,10 +177,6 @@ const Notify: React.FC = () => {
       )}
 
       <Divider />
-
-      <Button type="link" block>
-        Xem tất cả lời mời kết bạn
-      </Button>
     </div>
   );
 };

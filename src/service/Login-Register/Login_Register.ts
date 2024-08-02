@@ -73,10 +73,8 @@ export const pushBanner: any = createAsyncThunk(
     return res.data;
   }
 );
-export const updateFriendsApi = async (userId: number, newFriends: any[]) => {
-  const res = await api.patch(`users/${userId}`, { friends: newFriends });
-  console.log("res", res.data);
-
+export const updateFriendsApi = async (userId: number, friends: any[]) => {
+  const res = await api.patch(`users/${userId}`, { friends });
   return res.data;
 };
 export const updateFriends: any = createAsyncThunk(
@@ -84,12 +82,131 @@ export const updateFriends: any = createAsyncThunk(
   async (newFriends: any[], { getState, rejectWithValue }) => {
     try {
       const state: any = getState();
-      console.log("vo");
+
       const userId = state.users.currentUser.id;
 
       const response = await updateFriendsApi(userId, newFriends);
 
       return response;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const updateReceiverFriends: any = createAsyncThunk(
+  "user/updateReceiverFriends",
+  async (
+    { userId, newFriends }: { userId: number; newFriends: any[] },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.patch(`users/${userId}`, {
+        friends: newFriends,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const updateUserNotify: any = createAsyncThunk(
+  "user/updateUserNotify",
+  async (
+    { userId, newNotify }: { userId: number; newNotify: any[] },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await api.patch(`users/${userId}`, {
+        notyfi: newNotify,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+export const acceptFriendRequest: any = createAsyncThunk(
+  "user/acceptFriendRequest",
+  async (
+    { currentUserId, friendId }: { currentUserId: number; friendId: number },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      const state: any = getState();
+      const currentUser = state.users.users.find(
+        (user: users) => user.id === currentUserId
+      );
+      const friend = state.users.users.find(
+        (user: users) => user.id === friendId
+      );
+
+      if (!currentUser || !friend) {
+        throw new Error("User not found");
+      }
+
+      // Cập nhật trạng thái bạn bè cho người dùng hiện tại
+      const updatedCurrentUserFriends = currentUser.friends.map((f: any) =>
+        f.userId === friendId ? { ...f, status: "accept" } : f
+      );
+
+      // Cập nhật trạng thái bạn bè cho người gửi lời mời
+      const updatedFriendFriends = friend.friends.map((f: any) =>
+        f.userId === currentUserId ? { ...f, status: "accept" } : f
+      );
+
+      // Cập nhật cho cả hai người dùng
+      await api.patch(`users/${currentUserId}`, {
+        friends: updatedCurrentUserFriends,
+      });
+      const response = await api.patch(`users/${friendId}`, {
+        friends: updatedFriendFriends,
+      });
+
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const rejectFriendRequest: any = createAsyncThunk(
+  "user/rejectFriendRequest",
+  async (
+    { currentUserId, friendId }: { currentUserId: number; friendId: number },
+    { getState, rejectWithValue }
+  ) => {
+    try {
+      const state: any = getState();
+      const currentUser = state.users.users.find(
+        (user: users) => user.id === currentUserId
+      );
+      const friend = state.users.users.find(
+        (user: users) => user.id === friendId
+      );
+
+      if (!currentUser || !friend) {
+        throw new Error("User not found");
+      }
+
+      // Xóa thông tin kết bạn cho người dùng hiện tại
+      const updatedCurrentUserFriends = currentUser.friends.filter(
+        (f: any) => f.userId !== friendId
+      );
+
+      // Xóa thông tin kết bạn cho người gửi lời mời
+      const updatedFriendFriends = friend.friends.filter(
+        (f: any) => f.userId !== currentUserId
+      );
+
+      // Cập nhật cho cả hai người dùng
+      await api.patch(`users/${currentUserId}`, {
+        friends: updatedCurrentUserFriends,
+      });
+      const response = await api.patch(`users/${friendId}`, {
+        friends: updatedFriendFriends,
+      });
+
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
     }
@@ -150,6 +267,48 @@ export const authSlice = createSlice({
           console.log("action.payload", action.payload);
 
           state.currentUser.friends = action.payload.friends;
+        }
+      })
+      .addCase(updateUserNotify.fulfilled, (state, action) => {
+        const updatedUser = action.payload;
+        const index = state.users.findIndex(
+          (user) => user.id === updatedUser.id
+        );
+        if (index !== -1) {
+          state.users[index] = updatedUser;
+        }
+      })
+      .addCase(updateReceiverFriends.fulfilled, (state, action) => {
+        const updatedUser = action.payload;
+        const index = state.users.findIndex(
+          (user) => user.id === updatedUser.id
+        );
+        if (index !== -1) {
+          state.users[index] = updatedUser;
+        }
+      })
+      .addCase(acceptFriendRequest.fulfilled, (state, action) => {
+        const updatedUser = action.payload;
+        const index = state.users.findIndex(
+          (user) => user.id === updatedUser.id
+        );
+        if (index !== -1) {
+          state.users[index] = updatedUser;
+        }
+        if (state.currentUser && state.currentUser.id === updatedUser.id) {
+          state.currentUser = updatedUser;
+        }
+      })
+      .addCase(rejectFriendRequest.fulfilled, (state, action) => {
+        const updatedUser = action.payload;
+        const index = state.users.findIndex(
+          (user) => user.id === updatedUser.id
+        );
+        if (index !== -1) {
+          state.users[index] = updatedUser;
+        }
+        if (state.currentUser && state.currentUser.id === updatedUser.id) {
+          state.currentUser = updatedUser;
         }
       });
   },

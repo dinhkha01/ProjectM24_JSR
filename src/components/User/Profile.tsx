@@ -136,6 +136,12 @@ const Profile = () => {
     message.success("Ảnh bìa đã được cập nhật");
   };
 
+  const pinkButtonStyle = {
+    backgroundColor: "#FF69B4",
+    borderColor: "#FF69B4",
+    color: "white",
+  };
+
   return (
     <div>
       <Card
@@ -166,6 +172,7 @@ const Profile = () => {
               <Button
                 icon={<CameraOutlined />}
                 style={{
+                  ...pinkButtonStyle,
                   position: "absolute",
                   bottom: 16,
                   right: 16,
@@ -207,13 +214,15 @@ const Profile = () => {
           </div>
           <Row gutter={16} style={{ marginTop: 16 }}>
             <Col>
-              <Button type="primary">Thêm vào tin</Button>
+              <Button style={pinkButtonStyle}>Thêm vào tin</Button>
             </Col>
             <Col>
-              <Button icon={<EditOutlined />}>Chỉnh sửa trang cá nhân</Button>
+              <Button icon={<EditOutlined />} style={pinkButtonStyle}>
+                Chỉnh sửa trang cá nhân
+              </Button>
             </Col>
             <Col>
-              <Button icon={<EllipsisOutlined />} />
+              <Button icon={<EllipsisOutlined />} style={pinkButtonStyle} />
             </Col>
           </Row>
         </div>
@@ -249,9 +258,13 @@ const Profile = () => {
                     }}
                   >
                     <HeartOutlined
-                      style={{ fontSize: "20px", marginRight: "5px" }}
+                      style={{
+                        fontSize: "20px",
+                        marginRight: "5px",
+                        color: "#FF69B4",
+                      }}
                     />
-                    <span>Thích</span>
+                    <span style={{ color: "#FF69B4" }}>Thích</span>
                   </div>,
                   <div
                     key="comment"
@@ -262,9 +275,13 @@ const Profile = () => {
                     }}
                   >
                     <MessageOutlined
-                      style={{ fontSize: "20px", marginRight: "5px" }}
+                      style={{
+                        fontSize: "20px",
+                        marginRight: "5px",
+                        color: "#FF69B4",
+                      }}
                     />
-                    <span>Bình luận</span>
+                    <span style={{ color: "#FF69B4" }}>Bình luận</span>
                   </div>,
                   <div
                     key="share"
@@ -275,9 +292,13 @@ const Profile = () => {
                     }}
                   >
                     <SendOutlined
-                      style={{ fontSize: "20px", marginRight: "5px" }}
+                      style={{
+                        fontSize: "20px",
+                        marginRight: "5px",
+                        color: "#FF69B4",
+                      }}
                     />
-                    <span>Chia sẻ</span>
+                    <span style={{ color: "#FF69B4" }}>Chia sẻ</span>
                   </div>,
                 ]}
               >
@@ -386,10 +407,14 @@ const Profile = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         footer={[
-          <Button key="cancel" onClick={handleCancel}>
+          <Button key="cancel" onClick={handleCancel} style={pinkButtonStyle}>
             Hủy
           </Button>,
-          <Button key="submit" type="primary" onClick={handlePostSubmit}>
+          <Button
+            key="submit"
+            onClick={handlePostSubmit}
+            style={pinkButtonStyle}
+          >
             Đăng
           </Button>,
         ]}
@@ -405,7 +430,9 @@ const Profile = () => {
           </Form.Item>
           <Form.Item name="images">
             <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
+              <Button icon={<UploadOutlined />} style={pinkButtonStyle}>
+                Chọn ảnh
+              </Button>
             </Upload>
           </Form.Item>
         </Form>

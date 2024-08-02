@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getAllUsers,
   updateFriends,
+  updateReceiverFriends,
+  updateUserNotify,
 } from "../../service/Login-Register/Login_Register";
 import { RootState } from "../../store";
 import styled from "styled-components";
@@ -63,20 +65,44 @@ const Friends = () => {
         ...(currentUser.friends || []),
         { userId: userId, status: "pending", add_at: new Date().toISOString() },
       ];
-      console.log("newFriends", newFriends);
 
       dispatch(updateFriends(newFriends))
         .then(() => {
           message.success("Đã gửi lời mời kết bạn");
-          // Cập nhật lại danh sách gợi ý
           setSuggestions(suggestions.filter((user) => user.id !== userId));
+
+          // Cập nhật thông báo và bạn bè cho người dùng được mời kết bạn
+          const targetUser = allUsers.find((user) => user.id === userId);
+          if (targetUser) {
+            const newNotify = [
+              ...(targetUser.notyfi || []),
+              {
+                userId: currentUser.id,
+                content: ` đã gửi lời mời kết bạn`,
+                add_at: new Date().toISOString(),
+              },
+            ];
+            dispatch(updateUserNotify({ userId, newNotify }));
+
+            // Cập nhật danh sách bạn bè của người nhận
+            const newReceiverFriends = [
+              ...(targetUser.friends || []),
+              {
+                userId: currentUser.id,
+                status: "pending",
+                add_at: new Date().toISOString(),
+              },
+            ];
+            dispatch(
+              updateReceiverFriends({ userId, newFriends: newReceiverFriends })
+            );
+          }
         })
         .catch((error: any) => {
           message.error("Không thể gửi lời mời kết bạn: " + error.message);
         });
     }
   };
-
   return (
     <Card>
       <StyledTabs defaultActiveKey="1">

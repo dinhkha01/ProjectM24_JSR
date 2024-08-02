@@ -39,7 +39,6 @@ const TrangChu = () => {
   const posts = useSelector((state: RootState) => state.post.post);
 
   const userId = useSelector((state: RootState) => state.users.currentUser);
-  console.log("userId", userId);
 
   const users = useSelector((state: RootState) => state.users.users);
 
