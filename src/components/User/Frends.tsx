@@ -11,6 +11,7 @@ import {
 } from "../../service/Login-Register/Login_Register";
 import { RootState } from "../../store";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const { TabPane } = Tabs;
 const { Title } = Typography;
@@ -28,6 +29,7 @@ const StyledTabs = styled(Tabs)`
 
 const Friends = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const allUsers = useSelector((state: RootState) => state.users.users);
   const currentUser = useSelector(
     (state: RootState) => state.users.currentUser
@@ -59,7 +61,8 @@ const Friends = () => {
     }
   }, [currentUser, allUsers]);
 
-  const handleAddFriend = (userId: number) => {
+  const handleAddFriend = (event: React.MouseEvent, userId: number) => {
+    event.stopPropagation();
     if (currentUser) {
       const newFriends = [
         ...(currentUser.friends || []),
@@ -103,6 +106,41 @@ const Friends = () => {
         });
     }
   };
+
+  const handleUserClick = (userId: number) => {
+    navigate(`/user/${userId}`);
+  };
+
+  const renderUserItem = (user: users, showAddButton: boolean = false) => (
+    <List.Item
+      onClick={() => handleUserClick(user.id)}
+      style={{ cursor: "pointer" }}
+      actions={
+        showAddButton
+          ? [
+              <Button
+                icon={<UserAddOutlined />}
+                onClick={(e) => handleAddFriend(e, user.id)}
+                style={{
+                  backgroundColor: pinkColor,
+                  borderColor: pinkColor,
+                  color: "white",
+                }}
+              >
+                Add Friend
+              </Button>,
+            ]
+          : undefined
+      }
+    >
+      <List.Item.Meta
+        avatar={<Avatar src={user.avatar} icon={<UserOutlined />} />}
+        title={user.name}
+        description={user.email}
+      />
+    </List.Item>
+  );
+
   return (
     <Card>
       <StyledTabs defaultActiveKey="1">
@@ -111,15 +149,7 @@ const Friends = () => {
           <List
             itemLayout="horizontal"
             dataSource={friends}
-            renderItem={(user) => (
-              <List.Item>
-                <List.Item.Meta
-                  avatar={<Avatar src={user.avatar} icon={<UserOutlined />} />}
-                  title={user.name}
-                  description={user.email}
-                />
-              </List.Item>
-            )}
+            renderItem={(user) => renderUserItem(user)}
           />
         </TabPane>
         <TabPane tab="Gợi ý" key="2">
@@ -127,29 +157,7 @@ const Friends = () => {
           <List
             itemLayout="horizontal"
             dataSource={suggestions}
-            renderItem={(user) => (
-              <List.Item
-                actions={[
-                  <Button
-                    icon={<UserAddOutlined />}
-                    onClick={() => handleAddFriend(user.id)}
-                    style={{
-                      backgroundColor: pinkColor,
-                      borderColor: pinkColor,
-                      color: "white",
-                    }}
-                  >
-                    Add Friend
-                  </Button>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={<Avatar src={user.avatar} icon={<UserOutlined />} />}
-                  title={user.name}
-                  description={user.email}
-                />
-              </List.Item>
-            )}
+            renderItem={(user) => renderUserItem(user, true)}
           />
         </TabPane>
       </StyledTabs>

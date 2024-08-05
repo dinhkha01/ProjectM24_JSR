@@ -62,6 +62,20 @@ const Notify = () => {
           setFriendRequests(
             friendRequests.filter((request) => request.userId !== userId)
           );
+
+          // Remove the notification from the currentUser's notyfi array
+          if (currentUser.notyfi) {
+            const updatedNotyfi = currentUser.notyfi.filter(
+              (notif) => notif.userId !== userId
+            );
+            dispatch({
+              type: "UPDATE_CURRENT_USER",
+              payload: {
+                ...currentUser,
+                notyfi: updatedNotyfi,
+              },
+            });
+          }
         })
         .catch((error: any) => {
           message.error(
@@ -86,7 +100,7 @@ const Notify = () => {
           );
         })
         .catch((error: any) => {
-          message.error("Không thể từ chối lời mời kết bạn: " + error.message);
+          message.error("Không thể từ chối lời mờ i kết bạn: " + error.message);
         });
     }
   };

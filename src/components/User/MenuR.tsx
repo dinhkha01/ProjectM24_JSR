@@ -6,6 +6,15 @@ import { RootState } from "../../store";
 
 const MenuR = () => {
   const user = useSelector((state: RootState) => state.users.currentUser);
+  const allUsers = useSelector((state: RootState) => state.users.users);
+
+  // Filter friends with 'accept' status
+  const friends = user?.friends
+    ?.filter((friend) => friend.status === "accept")
+    .map((friend) => {
+      return allUsers.find((u) => u.id === friend.userId);
+    })
+    .filter(Boolean);
 
   return (
     <div>
@@ -27,38 +36,27 @@ const MenuR = () => {
         </NavLink>
       </Card>
       <Card title="Người liên hệ" style={{ marginTop: 16 }}>
-        <NavLink
-          to=""
-          style={() => ({
-            display: "block",
-            textDecoration: "none",
-            color: "inherit",
-            marginBottom: "8px",
-          })}
-        >
-          User 1
-        </NavLink>
-        <NavLink
-          to="/user/2"
-          style={() => ({
-            display: "block",
-            textDecoration: "none",
-            color: "inherit",
-            marginBottom: "8px",
-          })}
-        >
-          User 2
-        </NavLink>
-        <NavLink
-          to="/user/3"
-          style={() => ({
-            display: "block",
-            textDecoration: "none",
-            color: "inherit",
-          })}
-        >
-          User 3
-        </NavLink>
+        {friends && friends.length > 0 ? (
+          friends.map((friend: any) => (
+            <NavLink
+              key={friend.id}
+              to={`user/${friend.id}`}
+              style={() => ({
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                textDecoration: "none",
+                color: "inherit",
+                marginBottom: "8px",
+              })}
+            >
+              <Avatar src={friend.avatar} size={40} />
+              <span style={{ fontSize: "14px" }}>{friend.name}</span>
+            </NavLink>
+          ))
+        ) : (
+          <span>Không có người liên hệ</span>
+        )}
       </Card>
     </div>
   );

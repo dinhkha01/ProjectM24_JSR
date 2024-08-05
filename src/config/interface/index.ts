@@ -11,7 +11,7 @@ export interface users {
   notyfi: notyfiType[];
 }
 type FriendType = {
-  useId: number;
+  userId: number;
   status: "pending" | "accept" | "blocked";
   add_at: string;
 };

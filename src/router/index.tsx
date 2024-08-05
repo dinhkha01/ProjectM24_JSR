@@ -12,6 +12,7 @@ import TrangChu from "../components/User/TrangChu";
 import Profile from "../components/User/Profile";
 import Friends from "../components/User/Frends";
 import Notify from "../components/User/Notify";
+import ProfileUser from "../components/User/ProfileUser";
 
 const Router = () => {
   return (
@@ -25,6 +26,7 @@ const Router = () => {
           <Route path="frends" element={<Friends />} />
           <Route path="profile" element={<Profile />} />
           <Route path="notify" element={<Notify />} />
+          <Route path="user/:userId" element={<ProfileUser />} />
         </Route>
 
         <Route path="/admin" element={<Admin />} />
